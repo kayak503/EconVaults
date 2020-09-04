@@ -1,0 +1,11 @@
+name: EconVaults
+version: ${project.version}
+main: com.projectpalm.econvaults.econvaults.EconVaults
+api-version: 1.16
+authors: [ Ari ]
+description: an economy plugin that introduces banks
+website: projectpalm.tk
+commands:
+  EconVaults:
+    description: base command for EconVaults's plugin. do |EconVaults ?| for help!
+    aliases: [Econvaults,evaults]
