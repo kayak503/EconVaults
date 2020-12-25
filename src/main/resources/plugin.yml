@@ -5,7 +5,14 @@ api-version: 1.16
 authors: [ Ari ]
 description: an economy plugin that introduces banks
 website: projectpalm.tk
+
+depend: [Vault]
+
 commands:
   EconVaults:
     description: base command for EconVaults's plugin. do |EconVaults ?| for help!
     aliases: [Econvaults,evaults]
+  Money:
+    description: check your balance, give and reseive money
+    aliases: [$,cash,money]
+
