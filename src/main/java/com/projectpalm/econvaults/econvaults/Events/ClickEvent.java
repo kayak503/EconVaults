@@ -1,5 +1,6 @@
 package com.projectpalm.econvaults.econvaults.Events;
 
+import com.projectpalm.econvaults.econvaults.EconVaults;
 import com.projectpalm.econvaults.econvaults.GUI.VaultExchange;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ public class ClickEvent implements Listener {
                     break;
                 case NETHERITE_BLOCK:
                     player.closeInventory();
+
                     break;
             }
             e.setCancelled(true);

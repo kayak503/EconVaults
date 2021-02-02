@@ -9,23 +9,20 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R2.CraftWorld;
 import org.bukkit.entity.Player;
 
-public class Mob_Trader extends EntityVillager {
-    public Mob_Trader(Location loc){
+import java.util.UUID;
+
+public class Mob_Teller extends EntityVillager {
+    public Mob_Teller(Location loc, UUID uuid){
         super(EntityTypes.VILLAGER, ((CraftWorld) loc.getWorld()).getHandle());
 
         this.setPosition(loc.getX(),loc.getY(),loc.getZ());
         this.setCustomName(new ChatComponentText(ChatColor.GOLD+ "" + ChatColor.BOLD + "Trader"));
         this.setCustomNameVisible(true);
-        this.setHealth(999999999);
+        this.setInvulnerable(true);
         this.setNoAI(true);
         this.setSilent(true);
+        this.setCanPickupLoot(false);
+        this.setUUID(uuid);
     }
 
-    public int spawnTrader(String uid, Player player){
-        Mob_Trader mob = new Mob_Trader(player.getLocation());
-        WorldServer world = ((CraftWorld) player.getWorld()).getHandle();
-        world.addEntity(mob);
-
-        return 0;
-    }
 }

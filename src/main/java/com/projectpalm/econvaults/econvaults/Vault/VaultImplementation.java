@@ -1,6 +1,5 @@
 package com.projectpalm.econvaults.econvaults.Vault;
 
-import com.projectpalm.econvaults.econvaults.data;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
