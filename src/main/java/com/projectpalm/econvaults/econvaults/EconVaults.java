@@ -29,6 +29,8 @@ public final class EconVaults extends JavaPlugin {
         vaultHook.hook(); // Vault Hooking
         Data.RunDiagnostics(); // Data Class initialization
         Data.GetVaultByUuid(UUID.randomUUID()); // until error solved checks for code compilation
+        Data.UpdateNetMoneyCount();
+
 
         // Command Class links
         Objects.requireNonNull(getCommand("EconVaults")).setExecutor( new com.projectpalm.econvaults.econvaults.commands.EconVaults());
@@ -63,11 +65,11 @@ public final class EconVaults extends JavaPlugin {
                 break;
             case "N/A":
                 getLogger().severe("[EconVaults] Server Version Error, Critical  ");
-                Errors.TerminatePlugin();
+                ToolBox.TerminatePlugin();
         }
         if(tab == null){
             getLogger().severe("[EconVaults] Server Version Not supported , Plugin Disabling...");
-            Errors.TerminatePlugin();
+            ToolBox.TerminatePlugin();
         }
     }
 

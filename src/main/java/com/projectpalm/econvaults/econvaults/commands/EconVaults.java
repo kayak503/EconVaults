@@ -1,16 +1,13 @@
 package com.projectpalm.econvaults.econvaults.commands;
 
-import com.jayway.jsonpath.JsonPath;
 import com.projectpalm.econvaults.econvaults.Data.Data;
 import com.projectpalm.econvaults.econvaults.Data.VaultData;
-import com.projectpalm.econvaults.econvaults.Errors;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class EconVaults implements CommandExecutor {

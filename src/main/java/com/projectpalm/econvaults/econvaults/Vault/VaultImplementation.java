@@ -1,22 +1,25 @@
 package com.projectpalm.econvaults.econvaults.Vault;
 
+import com.projectpalm.econvaults.econvaults.Data.Data;
+import com.projectpalm.econvaults.econvaults.Data.PlayerData;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
+
 public class VaultImplementation implements Economy {
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
     public String getName() {
-        return null;
+        return "EconVaults";
     }
 
     @Override
@@ -26,12 +29,13 @@ public class VaultImplementation implements Economy {
 
     @Override
     public int fractionalDigits() {
-        return 0;
+        return 0; // no digits data is stored as an int
     }
 
     @Override
     public String format(double amount) {
-        return null;
+        if((int) amount == 1){return currencyNameSingular(); }
+        return currencyNamePlural();
     }
 
     @Override
@@ -46,142 +50,271 @@ public class VaultImplementation implements Economy {
 
     @Override
     public boolean hasAccount(String playerName) {
-        return false;
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        return playerData != null;
     }
 
     @Override
     public boolean hasAccount(OfflinePlayer player) {
-        return false;
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        return playerData != null;
     }
 
     @Override
-    public boolean hasAccount(String playerName, String worldName) {
-        return false;
+    public boolean hasAccount(String playerName, String worldName){
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        return playerData != null;
     }
 
     @Override
-    public boolean hasAccount(OfflinePlayer player, String worldName) {
-        return false;
+    public boolean hasAccount(OfflinePlayer player, String worldName)  {
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        return playerData != null;
     }
 
     @Override
     public double getBalance(String playerName) {
-        double rawData = data.ReadPlayerMoney(playerName);
-        if (rawData >= 0){
-            return rawData;
+        if (!hasAccount(playerName)){ createPlayerAccount(playerName); return 0;}
+
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        if(playerData != null){
+            return playerData.GetMoney();
         }
-        else{
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[EconVaults] Vault Implementation Error: " + ChatColor.BOLD +ChatColor.RED + rawData);
-            Player player = Bukkit.getPlayer(playerName);
-            player.sendMessage(ChatColor.RED + "An Error has occurred, please contact your server Admin");
-            return -1;
-        }
+        return 0;
     }
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        String playerName = player.getName();
-        int rawData = data.ReadPlayerMoney(playerName);
-        if (rawData < 0){
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[EconVaults] Vault Implementation Error: " + ChatColor.BOLD +ChatColor.RED + rawData);
+        if (!hasAccount(player)){ createPlayerAccount(player); return 0;}
+
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        if(playerData != null){
+            return playerData.GetMoney();
         }
-        return rawData;
+        return 0;
     }
 
     @Override
     public double getBalance(String playerName, String world) {
-        int rawData = data.ReadPlayerMoney(playerName);
-        if (rawData >= 0){
-            return rawData;
+        if (!hasAccount(playerName)){ createPlayerAccount(playerName); return 0;}
+
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        if(playerData != null){
+            return playerData.GetMoney();
         }
-        else{
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[EconVaults] Vault Implementation Error: " + ChatColor.BOLD +ChatColor.RED + rawData);
-            Player player = Bukkit.getPlayer(playerName);
-            player.sendMessage(ChatColor.RED + "An Error has occurred, please contact your server Admin");
-            return -1;
-        }
+        return 0;
     }
 
     @Override
     public double getBalance(OfflinePlayer player, String world) {
-        String playerName = player.getName();
-        int rawData = data.ReadPlayerMoney(playerName);
-        if (rawData < 0){
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[EconVaults] Vault Implementation Error: " + ChatColor.BOLD +ChatColor.RED + rawData);
+        if (!hasAccount(player)){ createPlayerAccount(player); return 0;}
+
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        if(playerData != null){
+            return playerData.GetMoney();
         }
-        return rawData;
+        return 0;
     }
 
     @Override
     public boolean has(String playerName, double amount) {
+        if (!hasAccount(playerName)){ createPlayerAccount(playerName); }
+
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        if(playerData != null){
+            return playerData.GetMoney() >= (int) amount;
+        }
         return false;
     }
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
+        if (!hasAccount(player)){ createPlayerAccount(player); }
+
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        if(playerData != null){
+            return playerData.GetMoney() >= (int) amount;
+        }
         return false;
     }
 
     @Override
     public boolean has(String playerName, String worldName, double amount) {
+        if (!hasAccount(playerName)){ createPlayerAccount(playerName); }
+
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        if(playerData != null){
+            return playerData.GetMoney() >= (int) amount;
+        }
         return false;
     }
 
     @Override
     public boolean has(OfflinePlayer player, String worldName, double amount) {
+        if (!hasAccount(player)){ createPlayerAccount(player); }
+
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        if(playerData != null){
+            return playerData.GetMoney() >= (int) amount;
+        }
         return false;
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        data.AdjustPlayerMoney(playerName, (int)amount*-1);
-        return null;
+        if (!hasAccount(playerName)){createPlayerAccount(playerName);}
+
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        if(playerData != null){
+            int newBalance = playerData.GetMoney() - ((int) amount);
+            playerData.SetMoney(newBalance);
+            Data.UpdatePlayerData(playerData);
+
+            int NetMoney = Data.GetNetMoney();
+            NetMoney -= (int) amount;
+            Data.UpdateNetMoney(NetMoney);
+
+
+            return new EconomyResponse( amount, newBalance, EconomyResponse.ResponseType.SUCCESS,"no error" );
+        }
+        return new EconomyResponse( amount,0, EconomyResponse.ResponseType.FAILURE,"Player Data not found " );
+
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        String playerName = player.getName();
-        data.AdjustPlayerMoney(playerName, (int)amount*-1);
-        return null;
+        if (!hasAccount(player)){createPlayerAccount(player);}
+
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        if(playerData != null){
+            int newBalance = playerData.GetMoney() - ((int) amount);
+            playerData.SetMoney(newBalance);
+            Data.UpdatePlayerData(playerData);
+
+            int NetMoney = Data.GetNetMoney();
+            NetMoney -=  (int) amount;
+            Data.UpdateNetMoney(NetMoney);
+            return new EconomyResponse( amount, newBalance, EconomyResponse.ResponseType.SUCCESS,"no error" );
+        }
+        return new EconomyResponse( amount,0, EconomyResponse.ResponseType.FAILURE,"Player Data not found " );
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        data.AdjustPlayerMoney(playerName, (int)amount*-1);
-        return null;
+        if (!hasAccount(playerName)){createPlayerAccount(playerName);}
+
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        if(playerData != null){
+            int newBalance = playerData.GetMoney() - ((int) amount);
+            playerData.SetMoney(newBalance);
+            Data.UpdatePlayerData(playerData);
+
+            int NetMoney = Data.GetNetMoney();
+            NetMoney -=  (int) amount;
+            Data.UpdateNetMoney(NetMoney);
+            return new EconomyResponse( amount, newBalance, EconomyResponse.ResponseType.SUCCESS,"no error" );
+        }
+        return new EconomyResponse( amount,0, EconomyResponse.ResponseType.FAILURE,"Player Data not found " );
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
-        String playerName = player.getName();
-        data.AdjustPlayerMoney(playerName, (int)amount*-1);
-        return null;
+        if (!hasAccount(player)){createPlayerAccount(player);}
+
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        if(playerData != null){
+            int newBalance = playerData.GetMoney() - ((int) amount);
+            playerData.SetMoney(newBalance);
+            Data.UpdatePlayerData(playerData);
+
+            int NetMoney = Data.GetNetMoney();
+            NetMoney -=  (int) amount;
+            Data.UpdateNetMoney(NetMoney);
+            return new EconomyResponse( amount, newBalance, EconomyResponse.ResponseType.SUCCESS,"no error" );
+        }
+        return new EconomyResponse( amount,0, EconomyResponse.ResponseType.FAILURE,"Player Data not found " );
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        data.AdjustPlayerMoney(playerName, (int)amount);
-        return null;
+        if (!hasAccount(playerName)){createPlayerAccount(playerName);}
+
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        if(playerData != null){
+            int newBalance = playerData.GetMoney() + ((int) amount);
+            playerData.SetMoney(newBalance);
+            Data.UpdatePlayerData(playerData);
+
+            int NetMoney = Data.GetNetMoney();
+            NetMoney +=  (int) amount;
+            Data.UpdateNetMoney(NetMoney);
+            return new EconomyResponse( amount, newBalance, EconomyResponse.ResponseType.SUCCESS,"no error" );
+        }
+        return new EconomyResponse( amount,0, EconomyResponse.ResponseType.FAILURE,"Player Data not found " );
     }
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        String playerName = player.getName();
-        data.AdjustPlayerMoney(playerName, (int)amount);
-        return null;
+        if (!hasAccount(player)){createPlayerAccount(player);}
+
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        if(playerData != null){
+            int newBalance = playerData.GetMoney() + ((int) amount);
+            playerData.SetMoney(newBalance);
+            Data.UpdatePlayerData(playerData);
+
+            int NetMoney = Data.GetNetMoney();
+            NetMoney +=  (int) amount;
+            Data.UpdateNetMoney(NetMoney);
+            return new EconomyResponse( amount, newBalance, EconomyResponse.ResponseType.SUCCESS,"no error" );
+        }
+        return new EconomyResponse( amount,0, EconomyResponse.ResponseType.FAILURE,"Player Data not found " );
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        data.AdjustPlayerMoney(playerName, (int)amount);
-        return null;
+        if (!hasAccount(playerName)){createPlayerAccount(playerName);}
+
+        PlayerData playerData = Data.GetPlayerData(playerName);
+        if(playerData != null){
+            int newBalance = playerData.GetMoney() + ((int) amount);
+            playerData.SetMoney(newBalance);
+            Data.UpdatePlayerData(playerData);
+
+            int NetMoney = Data.GetNetMoney();
+            NetMoney +=  (int) amount;
+            Data.UpdateNetMoney(NetMoney);
+            return new EconomyResponse( amount, newBalance, EconomyResponse.ResponseType.SUCCESS,"no error" );
+        }
+        return new EconomyResponse( amount,0, EconomyResponse.ResponseType.FAILURE,"Player Data not found " );
     }
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount) {
-        String playerName = player.getName();
-        data.AdjustPlayerMoney(playerName, (int)amount);
-        return null;
+        if (!hasAccount(player)){createPlayerAccount(player);}
+
+        UUID playerUuid = player.getUniqueId();
+        PlayerData playerData = Data.GetPlayerData(playerUuid);
+        if(playerData != null){
+            int newBalance = playerData.GetMoney() + ((int) amount);
+            playerData.SetMoney(newBalance);
+            Data.UpdatePlayerData(playerData);
+
+            int NetMoney = Data.GetNetMoney();
+            NetMoney +=  (int) amount;
+            Data.UpdateNetMoney(NetMoney);
+            return new EconomyResponse( amount, newBalance, EconomyResponse.ResponseType.SUCCESS,"no error" );
+        }
+        return new EconomyResponse( amount,0, EconomyResponse.ResponseType.FAILURE,"Player Data not found " );
     }
 
     @Override
@@ -246,21 +379,59 @@ public class VaultImplementation implements Economy {
 
     @Override
     public boolean createPlayerAccount(String playerName) {
+        if (hasAccount(playerName)){ return true; }
+
+        Player player = Bukkit.getPlayer(playerName);
+        if (player != null){
+            PlayerData playerData = new PlayerData();
+            playerData.SetMoney(0);
+            playerData.SetUuid(player.getUniqueId());
+            playerData.SetName(player.getName());
+            Data.AddNewPlayerData(playerData);
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player) {
-        return false;
+        if (hasAccount(player)){ return true; }
+
+        PlayerData playerData = new PlayerData();
+        playerData.SetMoney(0);
+        playerData.SetUuid(player.getUniqueId());
+        playerData.SetName(player.getName());
+
+        Data.AddNewPlayerData(playerData);
+        return true;
     }
 
     @Override
     public boolean createPlayerAccount(String playerName, String worldName) {
+        if (hasAccount(playerName)){ return true; }
+
+        Player player = Bukkit.getPlayer(playerName);
+        if (player != null){
+            PlayerData playerData = new PlayerData();
+            playerData.SetMoney(0);
+            playerData.SetUuid(player.getUniqueId());
+            playerData.SetName(player.getName());
+            Data.AddNewPlayerData(playerData);
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
-        return false;
+        if (hasAccount(player)){ return true; }
+
+        PlayerData playerData = new PlayerData();
+        playerData.SetMoney(0);
+        playerData.SetUuid(player.getUniqueId());
+        playerData.SetName(player.getName());
+
+        Data.AddNewPlayerData(playerData);
+        return true;
     }
 }

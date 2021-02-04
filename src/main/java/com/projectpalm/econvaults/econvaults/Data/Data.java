@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.JsonPath;
 import com.projectpalm.econvaults.econvaults.EconVaults;
-import com.projectpalm.econvaults.econvaults.Errors;
+import com.projectpalm.econvaults.econvaults.ToolBox;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.json.simple.parser.JSONParser;
@@ -22,7 +22,7 @@ public class Data {
 
     // Need to add iterator functionality to playerData class and VaultData class, replace json fetch.ToString with type classes
 
-    private static final String FOLDER = "plugins\\EconVaultsData";
+    private static final String FOLDER = "plugins\\EconVaults";
     private static final String DIR = System.getProperty("user.dir");
     public static final String VAULTDATA = "VaultData.json";
     public static final String PLAYERDATA = "playerData.json";
@@ -37,15 +37,15 @@ public class Data {
 
         File Folder = new File(DIR+"\\"+ FOLDER);
         if (!Folder.isDirectory()){
-            Error.add(Errors.DERECTORYNOTFOUND);
+            Error.add(ToolBox.DERECTORYNOTFOUND);
         }
         File VaultData = new File(DIR +"\\"+ FOLDER +"\\"+ VAULTDATA);
         if (!VaultData.exists()){
-            Error.add(Errors.VAUTLTFILENOTFOUND);
+            Error.add(ToolBox.VAUTLTFILENOTFOUND);
         }
         File PlayerData = new File(DIR +"\\"+ FOLDER +"\\"+ PLAYERDATA);
         if (!PlayerData.exists()){
-            Error.add(Errors.PLAYERFILENOTFOUND);
+            Error.add(ToolBox.PLAYERFILENOTFOUND);
         }
         return Error;
     }
@@ -64,7 +64,7 @@ public class Data {
         if (!VaultData.isFile()) {
             try {
                 if (VaultData.createNewFile()){
-                    if (WriteData(VAULTDATA, "{}") != Errors.NOERROR) {
+                    if (WriteData(VAULTDATA, "{}") != ToolBox.NOERROR) {
                         return false;
                     }
                 }
@@ -83,7 +83,7 @@ public class Data {
                             "  \"Name\": \"Net Money\",\n" +
                             "  \"Money\": 0,\n" +
                             "  \"uuid\": \"00000000-0000-0000-0000-000000000000\"\n" +
-                            " }}") != Errors.NOERROR) {
+                            " }}") != ToolBox.NOERROR) {
                         return false;
                     }
                 }
@@ -119,11 +119,11 @@ public class Data {
             FileWriter file = new FileWriter(Dir);
             file.write(jsonString);
             file.flush();
-            return Errors.NOERROR;
+            return ToolBox.NOERROR;
 
         } catch (IOException e) {
             e.printStackTrace();
-            return Errors.IOException;
+            return ToolBox.IOException;
         }
     }
 
@@ -135,15 +135,15 @@ public class Data {
 
         }
         else {
-            System.out.println(Errors.CautionBase + "file(s) were corrupted, deleted or never existed Error(s) :"+ErrorList.toString()+" Raised");
-            System.out.println(Errors.CautionBase +" Attempting to recreate file(s)");
+            System.out.println(ToolBox.CautionBase + "file(s) were corrupted, deleted or never existed Error(s) :"+ErrorList.toString()+" Raised");
+            System.out.println(ToolBox.CautionBase +" Attempting to recreate file(s)");
             if (createDirectory()){
-                System.out.println( Errors.CautionBase +"file(s) remade, plugin resuming ");
+                System.out.println( ToolBox.CautionBase +"file(s) remade, plugin resuming ");
 
             }
             else {
-                System.out.println(Errors.ErrorBase + "Failed to recreate file(s), plugin can not precede");
-                Errors.TerminatePlugin();
+                System.out.println(ToolBox.ErrorBase + "Failed to recreate file(s), plugin can not precede");
+                ToolBox.TerminatePlugin();
 
             }
         }
@@ -178,7 +178,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetVaultByName() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetVaultByName() :" + e.toString());
         }
         return null;
     }
@@ -207,7 +207,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetVaultByName() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetVaultByName() :" + e.toString());
         }
         return null;
     }
@@ -225,7 +225,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetVaultByName() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetVaultByName() :" + e.toString());
         }
         return null;
     }
@@ -248,7 +248,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetVaultByName() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetVaultByName() :" + e.toString());
         }
         if (Vaults.isEmpty()){
             return null;
@@ -288,7 +288,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetVaultByName() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetVaultByName() :" + e.toString());
         }
         if (Vaults.isEmpty()){
             return null;
@@ -327,7 +327,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetVaultByName() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetVaultByName() :" + e.toString());
         }
         if (Vaults.isEmpty()){
             return null;
@@ -360,7 +360,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetVaultByName() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetVaultByName() :" + e.toString());
         }
         if (Vaults.isEmpty()){
             System.out.println("Got here");
@@ -386,9 +386,9 @@ public class Data {
                 rawJson = "," + rawJson;
             }
             VaultDataFileRawJson += rawJson;
-            if (WriteData(VAULTDATA, VaultDataFileRawJson) == Errors.IOException) {
-                System.out.println(Errors.ErrorBase + " Fatal Error " + Errors.IOException + " Please review documentation for more details");
-                Errors.TerminatePlugin();
+            if (WriteData(VAULTDATA, VaultDataFileRawJson) == ToolBox.IOException) {
+                System.out.println(ToolBox.ErrorBase + " Fatal Error " + ToolBox.IOException + " Please review documentation for more details");
+                ToolBox.TerminatePlugin();
             }
         }else {
             UpdateVault(vault);
@@ -402,15 +402,15 @@ public class Data {
         UUID uuid = vault.GetUuid();
         VaultData Vaults[] = GetAllVaults();
         if (Vaults == null){
-            System.out.println(Errors.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [1/3]" );
+            System.out.println(ToolBox.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [1/3]" );
             Vaults = GetAllVaults();
             if (Vaults == null){
-                System.out.println(Errors.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [2/3]" );
+                System.out.println(ToolBox.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [2/3]" );
                 Vaults = GetAllVaults();
                 if (Vaults == null){
-                    System.out.println(Errors.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [3/3]" );
-                    System.out.println(Errors.ErrorBase + "Fatal plugin Error, Terminating plugin" );
-                    Errors.TerminatePlugin();
+                    System.out.println(ToolBox.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [3/3]" );
+                    System.out.println(ToolBox.ErrorBase + "Fatal plugin Error, Terminating plugin" );
+                    ToolBox.TerminatePlugin();
                 }
             }
         }
@@ -431,23 +431,23 @@ public class Data {
             }
         }
         newJson += "}";
-        if (WriteData(VAULTDATA, newJson) == Errors.IOException) {
-            System.out.println(Errors.ErrorBase + " Fatal Error " + Errors.IOException + " Please review documentation for more details");
-            Errors.TerminatePlugin();
+        if (WriteData(VAULTDATA, newJson) == ToolBox.IOException) {
+            System.out.println(ToolBox.ErrorBase + " Fatal Error " + ToolBox.IOException + " Please review documentation for more details");
+            ToolBox.TerminatePlugin();
         }
     }
     public static void RemoveVault(UUID uuid){
         VaultData Vaults[] = GetAllVaults();
         if (Vaults == null){
-            System.out.println(Errors.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [1/3]" );
+            System.out.println(ToolBox.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [1/3]" );
             Vaults = GetAllVaults();
             if (Vaults == null){
-                System.out.println(Errors.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [2/3]" );
+                System.out.println(ToolBox.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [2/3]" );
                 Vaults = GetAllVaults();
                 if (Vaults == null){
-                    System.out.println(Errors.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [3/3]" );
-                    System.out.println(Errors.ErrorBase + "Fatal plugin Error, Terminating plugin" );
-                    Errors.TerminatePlugin();
+                    System.out.println(ToolBox.ErrorBase + "RemoveVault() Data Collection Failed, Attempt [3/3]" );
+                    System.out.println(ToolBox.ErrorBase + "Fatal plugin Error, Terminating plugin" );
+                    ToolBox.TerminatePlugin();
                 }
             }
         }
@@ -468,13 +468,13 @@ public class Data {
             }
         }
         newJson += "}";
-        if (WriteData(VAULTDATA, newJson) == Errors.IOException) {
-            System.out.println(Errors.ErrorBase + " Fatal Error " + Errors.IOException + " Please review documentation for more details");
-            Errors.TerminatePlugin();
+        if (WriteData(VAULTDATA, newJson) == ToolBox.IOException) {
+            System.out.println(ToolBox.ErrorBase + " Fatal Error " + ToolBox.IOException + " Please review documentation for more details");
+            ToolBox.TerminatePlugin();
         }
     }
 
-    // Money Data // tested and done
+    // Player Data
 
         // ReadData
     public static PlayerData GetPlayerData(String name) {
@@ -487,7 +487,7 @@ public class Data {
              return gsonCreate.fromJson(JsonString, PlayerData.class);
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetPlayerData() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetPlayerData() :" + e.toString());
         }
         return null;
     }
@@ -499,7 +499,7 @@ public class Data {
             return gsonCreate.fromJson(JsonString, PlayerData.class);
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.GetPlayerData() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetPlayerData() :" + e.toString());
         }
         return null;
     }
@@ -516,8 +516,8 @@ public class Data {
         String rawJson = ",\""+ player.GetUuid().toString()+ "\":" + gsonCreate.toJson(player) + " \n}";
         String PlayerDataFileRawJson = ReadData(PLAYERDATA).replaceAll("}$", "");;
         PlayerDataFileRawJson += rawJson;
-        if (WriteData(PLAYERDATA, PlayerDataFileRawJson) == Errors.IOException){
-            System.out.println(Errors.ErrorBase +" Fatal Error "+ Errors.IOException+" Please review documentation for more details");
+        if (WriteData(PLAYERDATA, PlayerDataFileRawJson) == ToolBox.IOException){
+            System.out.println(ToolBox.ErrorBase +" Fatal Error "+ ToolBox.IOException+" Please review documentation for more details");
             Bukkit.getPluginManager().disablePlugin(EconVaults.getInstance);
         }
     }
@@ -527,8 +527,8 @@ public class Data {
         String newJson = JsonPath.parse(PlayerDataFileRawJson).set("$[\""+player.GetUuid()+"\"]['Money']", player.GetMoney()).jsonString();
         newJson = JsonPath.parse(newJson).set("$[\""+player.GetUuid()+"\"]['Name']", player.GetName()).jsonString();
 
-        if (WriteData(PLAYERDATA, newJson) == Errors.IOException){
-            System.out.println(Errors.ErrorBase +" Fatal Error "+ Errors.IOException+" Please review documentation for more details");
+        if (WriteData(PLAYERDATA, newJson) == ToolBox.IOException){
+            System.out.println(ToolBox.ErrorBase +" Fatal Error "+ ToolBox.IOException+" Please review documentation for more details");
             Bukkit.getPluginManager().disablePlugin(EconVaults.getInstance);
         }
 
@@ -553,7 +553,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(Errors.CautionBase + "Data.UpdateNetMoneyCount() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.UpdateNetMoneyCount() :" + e.toString());
         }
 
     }
