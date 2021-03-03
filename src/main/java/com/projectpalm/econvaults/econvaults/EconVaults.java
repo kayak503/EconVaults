@@ -4,6 +4,7 @@ import com.projectpalm.econvaults.econvaults.Data.Data;
 import com.projectpalm.econvaults.econvaults.Events.ClickEvent;
 import com.projectpalm.econvaults.econvaults.NMS_versions.VersionManager;
 import com.projectpalm.econvaults.econvaults.NMS_versions.v1_16_R2.Manager_v1_16_R2;
+import com.projectpalm.econvaults.econvaults.Vault.Startup;
 import com.projectpalm.econvaults.econvaults.Vault.VaultHook;
 import com.projectpalm.econvaults.econvaults.Vault.VaultImplementation;
 import org.bukkit.Bukkit;
@@ -27,9 +28,10 @@ public final class EconVaults extends JavaPlugin {
     public void onEnable() {
         instanceClasses(); // Initialization of non static Methods and Variables
         vaultHook.hook(); // Vault Hooking
-        Data.RunDiagnostics(); // Data Class initialization
-        Data.GetVaultByUuid(UUID.randomUUID()); // until error solved checks for code compilation
-        Data.UpdateNetMoneyCount();
+        Startup.StartUpEconVaults();
+
+
+        //this.saveDefaultConfig();
 
 
         // Command Class links

@@ -18,6 +18,7 @@ public class ToolBox {
     public static final Integer IOException = 5;
     public static final Integer DATAREQUESTFAILED = 6;
     public static final Integer DATWRITEFAILD = 7;
+    public static final Integer CONFIGFILENOTFOUND = 8;
 
     public static void TerminatePlugin()
     {

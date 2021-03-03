@@ -4,11 +4,14 @@ package com.projectpalm.econvaults.econvaults.Data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
 import com.projectpalm.econvaults.econvaults.EconVaults;
 import com.projectpalm.econvaults.econvaults.ToolBox;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -47,6 +50,12 @@ public class Data {
         if (!PlayerData.exists()){
             Error.add(ToolBox.PLAYERFILENOTFOUND);
         }
+        File ConfigData = new File(DIR+"\\"+FOLDER+"\\"+"config.yml");
+        if (!ConfigData.exists()){
+            Error.add(ToolBox.CONFIGFILENOTFOUND);
+        }
+
+
         return Error;
     }
     private static boolean createDirectory(){
@@ -93,6 +102,17 @@ public class Data {
                 return false;
             }
         }
+        File ConfigData = new File(DIR+"\\"+FOLDER+"\\"+"config.yml");
+        if (!ConfigData.isFile()) {
+            try {
+                ConfigData.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+
         return true;
     }
     private static String ReadData(String FileName) {
@@ -136,7 +156,7 @@ public class Data {
         }
         else {
             System.out.println(ToolBox.CautionBase + "file(s) were corrupted, deleted or never existed Error(s) :"+ErrorList.toString()+" Raised");
-            System.out.println(ToolBox.CautionBase +" Attempting to recreate file(s)");
+            System.out.println(ToolBox.CautionBase + "Attempting to recreate file(s)");
             if (createDirectory()){
                 System.out.println( ToolBox.CautionBase +"file(s) remade, plugin resuming ");
 
@@ -158,14 +178,14 @@ public class Data {
         String filter = "$.[*].[?( @.Name == \""+name+"\")]";
         VaultDataFileRawJson = ReadData(VAULTDATA);
 
+
         try {
             String MatchingVaultsRaw = (JsonPath.read(VaultDataFileRawJson, filter)).toString(); // get all vaults with matching names from method String name
             MatchingVaultsRaw = MatchingVaultsRaw.substring(1,MatchingVaultsRaw.length()-1); // remove first and last [ ]
-            String MatchingVaults[] = MatchingVaultsRaw.split("},"); // separate vaults into list
+
+            String MatchingVaults[] = MatchingVaultsRaw.replace("},{", "};,;{").split(";,;");  // separate vaults into list
+
             for (String MatchingVault:MatchingVaults){  // loop through vaults
-                if( MatchingVault.endsWith("]")){ // if vault lost } through split add it back
-                    MatchingVault += "}";
-                }
 
                 VaultData Vault = gsonCreate.fromJson(MatchingVault, VaultData.class); // turn into vault class
                 String Owners[] = Vault.GetOwners(); // get list of owners
@@ -190,11 +210,10 @@ public class Data {
         try {
             String MatchingVaultsRaw = (JsonPath.read(VaultDataFileRawJson, filter)).toString(); // get all vaults with matching names from method String name
             MatchingVaultsRaw = MatchingVaultsRaw.substring(1,MatchingVaultsRaw.length()-1); // remove first and last [ ]
-            String MatchingVaults[] = MatchingVaultsRaw.split("},"); // separate vaults into list
+
+            String MatchingVaults[] = MatchingVaultsRaw.replace("},{", "};,;{").split(";,;");  // separate vaults into list
+
             for (String MatchingVault:MatchingVaults){  // loop through vaults
-                if( MatchingVault.endsWith("]")){ // if vault lost } through split add it back
-                    MatchingVault += "}";
-                }
 
                 VaultData Vault = gsonCreate.fromJson(MatchingVault, VaultData.class); // turn into vault class
                 String Owners[] = Vault.GetOwners(); // get list of owners
@@ -238,11 +257,10 @@ public class Data {
         try {
             String MatchingVaultsRaw = (JsonPath.read(VaultDataFileRawJson, filter)).toString(); // get all vaults with matching names from method String name
             MatchingVaultsRaw = MatchingVaultsRaw.substring(1,MatchingVaultsRaw.length()-1); // remove first and last [ ]
-            String MatchingVaults[] = MatchingVaultsRaw.split("},"); // separate vaults into list
+
+            String MatchingVaults[] = MatchingVaultsRaw.replace("},{", "};,;{").split(";,;");
+
             for (String MatchingVault:MatchingVaults){  // loop through vaults
-                if( MatchingVault.endsWith("]")){ // if vault lost } through split add it back
-                    MatchingVault += "}";
-                }
                 Vaults.add(gsonCreate.fromJson(MatchingVault, VaultData.class)); // turn into vault class
             }
 
@@ -271,11 +289,10 @@ public class Data {
         try {
             String MatchingVaultsRaw = (JsonPath.read(VaultDataFileRawJson, filter)).toString(); // get all vaults with matching names from method String name
             MatchingVaultsRaw = MatchingVaultsRaw.substring(1,MatchingVaultsRaw.length()-1); // remove first and last [ ]
-            String MatchingVaults[] = MatchingVaultsRaw.split("},"); // separate vaults into list
+
+            String MatchingVaults[] = MatchingVaultsRaw.replace("},{", "};,;{").split(";,;");
+
             for (String MatchingVault:MatchingVaults){  // loop through vaults
-                if( MatchingVault.endsWith("]")){ // if vault lost } through split add it back
-                    MatchingVault += "}";
-                }
 
                 VaultData Vault = gsonCreate.fromJson(MatchingVault, VaultData.class); // turn into vault class
                 String Owners[] = Vault.GetOwners(); // get list of owners
@@ -310,11 +327,10 @@ public class Data {
         try {
             String MatchingVaultsRaw = (JsonPath.read(VaultDataFileRawJson, filter)).toString(); // get all vaults with matching names from method String name
             MatchingVaultsRaw = MatchingVaultsRaw.substring(1,MatchingVaultsRaw.length()-1); // remove first and last [ ]
-            String MatchingVaults[] = MatchingVaultsRaw.split("},"); // separate vaults into list
+
+            String MatchingVaults[] = MatchingVaultsRaw.replace("},{", "};,;{").split(";,;");
+
             for (String MatchingVault:MatchingVaults){  // loop through vaults
-                if( MatchingVault.endsWith("]")){ // if vault lost } through split add it back
-                    MatchingVault += "}";
-                }
 
                 VaultData Vault = gsonCreate.fromJson(MatchingVault, VaultData.class); // turn into vault class
                 String Owners[] = Vault.GetOwners(); // get list of owners
@@ -327,7 +343,7 @@ public class Data {
 
         }
         catch (Exception e){
-            System.out.println(ToolBox.CautionBase + "Data.GetVaultByName() :" + e.toString());
+            System.out.println(ToolBox.CautionBase + "Data.GetAllPlayerVaults() :" + e.toString());
         }
         if (Vaults.isEmpty()){
             return null;
@@ -350,11 +366,10 @@ public class Data {
         try {
             String MatchingVaultsRaw = (JsonPath.read(VaultDataFileRawJson, filter)).toString(); // get all vaults with matching names from method String name
             MatchingVaultsRaw = MatchingVaultsRaw.substring(1,MatchingVaultsRaw.length()-1); // remove first and last [ ]
-            String MatchingVaults[] = MatchingVaultsRaw.split("},"); // separate vaults into list
+
+            String MatchingVaults[] = MatchingVaultsRaw.replace("},{", "};,;{").split(";,;");
+
             for (String MatchingVault:MatchingVaults){  // loop through vaults
-                if( MatchingVault.endsWith("]")){ // if vault lost } through split add it back
-                    MatchingVault += "}";
-                }
                 Vaults.add(gsonCreate.fromJson(MatchingVault, VaultData.class)); // turn into vault class
             }
 

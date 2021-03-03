@@ -1,5 +1,7 @@
 package com.projectpalm.econvaults.econvaults.Data;
 
+import org.bukkit.Material;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -7,7 +9,7 @@ public class VaultData {
     private String Name;
     private Integer[][] VaultPosition;
     private Integer[] TellerPosition;
-    private Map<String,Integer> Contents;
+    private Map<Material,Integer> Contents; // Item material, The amount they have
     private String[] Owners;
     private String Team;
     private UUID uuid;
@@ -49,5 +51,11 @@ public class VaultData {
         if (uuid == null){
            uuid = UUID.randomUUID();
         }
+    }
+    public void SetContentsMap(Map<Material,Integer> map){
+        Contents = map;
+    }
+    public Map<Material,Integer> GetContentsMap(){
+        return Contents;
     }
 }

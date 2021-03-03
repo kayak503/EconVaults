@@ -8,7 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-
+// deprecated to be deleted at a later date
 public class VaultExchange {
     public static void VaultExchangeGUI(Player player){
         Inventory gui = Bukkit.createInventory(player, 27, ChatColor.BOLD + "Bank Teller");
@@ -47,9 +47,9 @@ public class VaultExchange {
     public static void VaultExchangeDiamondGUI(Player player){
         Inventory gui = Bukkit.createInventory(player, 27, ChatColor.BOLD + "Bank Teller - Diamonds");
 
-        ItemStack[] Buys = GuiSetupMethods.GetItemBuyList(new ItemStack(Material.DIAMOND_BLOCK), new int[]{1, 5, 10, 50, 100}, new int[]{40 , 200 , 400, 2000, 4000}, "Diamond Block");
+        ItemStack[] Buys = GuiMethods.GetItemBuyList(new ItemStack(Material.DIAMOND_BLOCK), new int[]{1, 5, 10, 50, 100}, new int[]{40 , 200 , 400, 2000, 4000}, "Diamond Block");
 
-        ItemStack[] Sells = GuiSetupMethods.GetItemSellList(new ItemStack(Material.DIAMOND_BLOCK), new int[]{1, 5, 10, 50, 100}, new int[]{40 , 200 , 400, 2000, 4000}, "Diamond Block");
+        ItemStack[] Sells = GuiMethods.GetItemSellList(new ItemStack(Material.DIAMOND_BLOCK), new int[]{1, 5, 10, 50, 100}, new int[]{40 , 200 , 400, 2000, 4000}, "Diamond Block");
 
         ItemStack[] GuiItems = {
                 Buys[0], null, Buys[1], null, Buys[2], null, Buys[3], null, Buys[4],

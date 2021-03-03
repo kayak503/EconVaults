@@ -2,6 +2,7 @@ package com.projectpalm.econvaults.econvaults.commands;
 
 import com.projectpalm.econvaults.econvaults.Data.Data;
 import com.projectpalm.econvaults.econvaults.Data.VaultData;
+import com.projectpalm.econvaults.econvaults.GUI.VaultGuiMethods;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,27 +28,22 @@ public class EconVaults implements CommandExecutor {
 
             if (args.length == 0 || args[0].equals("?")) {
                 sender.sendMessage(ChatColor.GOLD + "Welcome to Econ Vaults! bellow are the basic commands to get you going");
-                sender.sendMessage(ChatColor.GOLD + "<t> MyVaults - shows you all the vaults you own");
-                sender.sendMessage(ChatColor.GOLD + "<t> AddVault");
-                sender.sendMessage(ChatColor.GOLD + "<t> EditVaults");
-                sender.sendMessage(ChatColor.GOLD + "<t> RemoveVault");
-            } else if (args[0].equalsIgnoreCase("MyVaults")) {
-                VaultData Vaults[] = Data.GetAllPlayerVaults(player);
-                if (Vaults != null) {
-                    String vaultNames = "";
-                    for (int i = 0; i < Vaults.length; i++) {
-                        VaultData vault = Vaults[i];
-                        vaultNames += " " + vault.GetName();
-                        if (i != Vaults.length - 1) {
-                            vaultNames += ",";
-                        }
-                    }
-                    sender.sendMessage(vaultNames);
-                } else {
-                    sender.sendMessage("No Vaults have been set up yet");
-                }
-
+                sender.sendMessage(ChatColor.GOLD + "<t> Vaults ~ Shows you All your current Vaults");
+                sender.sendMessage(ChatColor.GOLD + "<t> Create ~ Create at Vault");
+                sender.sendMessage(ChatColor.GOLD + "<t> Update ~ Update a Vault");
+                sender.sendMessage(ChatColor.GOLD + "<t> RemoveVault ~ not yet implemented ");
             }
+
+            else if (args[0].equalsIgnoreCase("Create")) {
+                VaultGuiMethods.AddNewVault(player);
+            }
+            else if (args[0].equalsIgnoreCase("Vaults")) {
+                VaultGuiMethods.ShowVaults(player);
+            }
+            else if (args[0].equalsIgnoreCase("Update")) {
+                VaultGuiMethods.EditVault(player);
+            }
+
 
         }
         return false;
