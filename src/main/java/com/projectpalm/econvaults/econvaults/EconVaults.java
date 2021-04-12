@@ -1,27 +1,28 @@
 package com.projectpalm.econvaults.econvaults;
 
 import com.projectpalm.econvaults.econvaults.Data.Data;
+import com.projectpalm.econvaults.econvaults.Data.VaultData;
 import com.projectpalm.econvaults.econvaults.Events.ClickEvent;
+import com.projectpalm.econvaults.econvaults.Events.onPlayerInteractEntity;
 import com.projectpalm.econvaults.econvaults.NMS_versions.VersionManager;
 import com.projectpalm.econvaults.econvaults.NMS_versions.v1_16_R2.Manager_v1_16_R2;
-import com.projectpalm.econvaults.econvaults.Vault.Startup;
 import com.projectpalm.econvaults.econvaults.Vault.VaultHook;
 import com.projectpalm.econvaults.econvaults.Vault.VaultImplementation;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Objects;
-import java.util.UUID;
 
 
 public final class EconVaults extends JavaPlugin {
     // Vault hook variables
     public static EconVaults getInstance; // For Using non Static Methods and variables in EconVaults class
-
     public VaultImplementation economyImplementer;
     private VaultHook vaultHook;
     // NMS Version Manager
     public VersionManager tab;
     public String sVersion;
+    public static World OverWorld;
 
 
     @Override
@@ -40,6 +41,9 @@ public final class EconVaults extends JavaPlugin {
 
         //Event Class links
         getServer().getPluginManager().registerEvents(new ClickEvent(), this);
+        getServer().getPluginManager().registerEvents(new onPlayerInteractEntity(), this);
+        //getServer().getPluginManager().registerEvents(new PlayerJoinEvent(), this);
+
 
 
 
@@ -49,6 +53,10 @@ public final class EconVaults extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         vaultHook.unhook();
+        VaultData AllVaults[] = Data.GetAllVaults();
+        for (int i = 0; i < AllVaults.length; i++){
+            tab.killTeller(AllVaults[i].GetUuid());
+        }
     }
 
     private void instanceClasses() {
@@ -72,6 +80,13 @@ public final class EconVaults extends JavaPlugin {
         if(tab == null){
             getLogger().severe("[EconVaults] Server Version Not supported , Plugin Disabling...");
             ToolBox.TerminatePlugin();
+        }
+        OverWorld = this.getServer().getWorld("World");
+        if (OverWorld == null){
+            System.out.println(ToolBox.ErrorBase +"World null");
+        }
+        else{
+            System.out.println(ToolBox.Base +"OverWorld Captured");
         }
     }
 

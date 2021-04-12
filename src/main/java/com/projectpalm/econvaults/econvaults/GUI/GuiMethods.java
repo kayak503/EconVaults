@@ -1,14 +1,16 @@
 package com.projectpalm.econvaults.econvaults.GUI;
 
-import com.mojang.authlib.GameProfile;
 import com.projectpalm.econvaults.econvaults.Data.VaultData;
+import com.projectpalm.econvaults.econvaults.EconVaults;
+import com.projectpalm.econvaults.econvaults.ToolBox;
 import dev.dbassett.skullcreator.SkullCreator;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
 
@@ -43,6 +45,7 @@ public class GuiMethods {
         Char64Map.put('x',"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWE2Nzg3YmEzMjU2NGU3YzJmM2EwY2U2NDQ5OGVjYmIyM2I4OTg0NWU1YTY2YjVjZWM3NzM2ZjcyOWVkMzcifX19");
         Char64Map.put('y',"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzUyZmIzODhlMzMyMTJhMjQ3OGI1ZTE1YTk2ZjI3YWNhNmM2MmFjNzE5ZTFlNWY4N2ExY2YwZGU3YjE1ZTkxOCJ9fX0=");
         Char64Map.put('z',"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTA1ODJiOWI1ZDk3OTc0YjExNDYxZDYzZWNlZDg1ZjQzOGEzZWVmNWRjMzI3OWY5YzQ3ZTFlMzhlYTU0YWU4ZCJ9fX0=");
+        Char64Map.put('<',"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzM3NjQ4YWU3YTU2NGE1Mjg3NzkyYjA1ZmFjNzljNmI2YmQ0N2Y2MTZhNTU5Y2U4YjU0M2U2OTQ3MjM1YmNlIn19fQ==");
     }
 
     // Public
@@ -56,160 +59,197 @@ public class GuiMethods {
         return SkullCreator.itemFromBase64(base64);
     }
 
-    public static ItemStack[] GetItemBuyList(ItemStack block, int[] quantity, int[] prices, String name){
-        List<ItemStack> ReturnList = new ArrayList<>();
-        String blockName = name;
-        for (int i =0; i < prices.length; i++){
-            ItemStack x = block;
-            if(i <= quantity.length) {
-                ItemMeta Filler_Meta = block.getItemMeta();
-                if (quantity[i] != 1) {
-                    Filler_Meta.setDisplayName(ChatColor.GREEN + "Buy " + quantity[i] + " " + blockName +"s");
-                }
-                else {
-                    Filler_Meta.setDisplayName(ChatColor.GREEN + "Buy A " + blockName);
-                }
+    public static ItemStack[] GetVaultItemList(VaultData vault){
+        // extract all map keys and return as a list of itemstacks with names
+        List<ItemStack> itemList = new ArrayList<>();
 
-                ArrayList<String> Filler_lore = new ArrayList<>();
-                Filler_lore.add(ChatColor.WHITE + "Cost: " +ChatColor.GOLD + prices[i] + "$");
-                Filler_Meta.setLore(Filler_lore);
+        ItemStack BackButton = GuiMethods.GetHeadChars('<');
+        ItemMeta BackButtonMeta = BackButton.getItemMeta();
+        ArrayList<String> Filler_lore = new ArrayList<>();
+//        Filler_lore.add("Exit out of " + vault.GetName());
+        Filler_lore.add(ChatColor.MAGIC + vault.GetUuid().toString());
+        BackButtonMeta.setLore(Filler_lore);
+        BackButtonMeta.setDisplayName(ChatColor.BOLD+"Close Shop");
+        BackButton.setItemMeta(BackButtonMeta);
+        itemList.add(BackButton);
 
-                x.setItemMeta(Filler_Meta);
-                ReturnList.add(x.clone());
+        for(Material key: vault.GetContentsMap().keySet()){
+            ItemStack block =  new ItemStack(key);
+            ItemMeta meta = block.getItemMeta();
+            meta.setDisplayName(ChatColor.GOLD +"Buy/Sell "+ ToolBox.toTitleCase(block.getType().toString()));
+            block.setItemMeta(meta);
+            itemList.add(block);
+        }
+
+        return itemList.toArray(new ItemStack[itemList.size()]);
+        //itemList.add();
+
+    }
+
+    public static void GenerateInventory(ItemStack[] items, String name, Player player, Boolean FirstSlotIsBackButton){
+        int ROWSIZE = 9;
+
+        int rows = (int) ((items.length/ROWSIZE) +0.999999);
+        if (rows == 0) {rows = 1;}
+        int inventorySize = rows*ROWSIZE;
+        List<ItemStack> itemList = Arrays.asList(items);
+        if (items.length >= inventorySize - 1){
+            Inventory gui = Bukkit.createInventory(player, inventorySize, name);
+            gui.setContents(items);
+            player.openInventory(gui);
+            return;
+        }
+        int itemListLength =  items.length;
+        int inventorySizeCalc = inventorySize;
+        int startSlot = 0;
+        if (FirstSlotIsBackButton){
+            inventorySizeCalc--;
+            startSlot++;
+        }
+
+
+        if ((inventorySizeCalc - itemListLength )%2 == 0){
+            int NullAddition = ((inventorySizeCalc - itemListLength)/2);
+            ItemStack[] itemsFinal = new ItemStack[items.length+NullAddition];
+
+            for (int i =0; i < items.length; i++){
+                itemsFinal[i+ NullAddition] = items[i];
+            }
+
+            if (FirstSlotIsBackButton){
+                itemsFinal[0] = items[0];
+                itemsFinal[NullAddition] = null;
+            }
+            Inventory gui = Bukkit.createInventory(player, inventorySize, name);
+            gui.setContents(itemsFinal);
+            player.openInventory(gui);
+            }
+        else {
+            int NullAddition = (((inventorySizeCalc - itemListLength)+1)/2);
+            ItemStack[] itemsFinal = new ItemStack[items.length+(NullAddition*2)+5];
+
+            for (int i =0; i < items.length; i++){
+                itemsFinal[i+ NullAddition] = items[i];
+            }
+
+            if (FirstSlotIsBackButton){
+                itemsFinal[0] = items[0];
+                itemsFinal[NullAddition] = null;
+            }
+            itemsFinal[items.length+NullAddition-1] = null;
+            itemsFinal[(items.length+(NullAddition*2)+5)-1] = items[items.length-1];
+
+
+            Inventory gui = Bukkit.createInventory(player, inventorySize+ROWSIZE, name);
+            gui.setContents(itemsFinal);
+            player.openInventory(gui);
+        }
+    }
+
+    public static void GenerateBuySellInventory(Material material, VaultData vault, Player player,String name){
+
+        int VaultSpaceLeft;
+        int VaultQuantityOfItem;
+        int PlayerBankAccount;
+
+        int[] quantities = {1,5,10,50,100};
+        ItemStack[] itemList = new ItemStack[9*5];
+
+        ItemStack BackButton = GuiMethods.GetHeadChars('<');
+            ItemMeta BackButtonMeta = BackButton.getItemMeta();
+                ArrayList<String> lore = new ArrayList<>();
+                lore.add(ChatColor.MAGIC + vault.GetUuid().toString());
+            BackButtonMeta.setLore(lore);
+            BackButtonMeta.setDisplayName(ChatColor.BOLD+"Back To Shop");
+        BackButton.setItemMeta(BackButtonMeta);
+        itemList[0] = BackButton;
+
+        ItemStack Block = new ItemStack(material);
+        int Price =  EconVaults.getInstance.getConfig().getInt("VaultExchangeItems." + material.toString());
+        // gen Buy blocks
+        for (int i =0; i < quantities.length; i++){
+            int quantity = quantities[i];
+            ItemMeta Meta = Block.getItemMeta();
+
+            ArrayList<String> Lore = new ArrayList<>();
+
+            if(EconVaults.getInstance.economyImplementer.has(player.getName(),Price*quantity)) {
+                if (quantity != 1) {
+                    Meta.setDisplayName(ChatColor.GREEN + "Buy " + quantity + " " + material.name() + "s");
+                } else {
+                    Meta.setDisplayName(ChatColor.GREEN + "Buy A " + material.name());
+                }
+            }
+            else {
+                if (quantity != 1) {
+                    Meta.setDisplayName(ChatColor.STRIKETHROUGH + "Buy " + quantity + " " + material.name() + "s" + ChatColor.STRIKETHROUGH  );
+                    Lore.add(ChatColor.BOLD + "" + ChatColor.GRAY +
+                            "Not Enough Money To Buy");
+                } else {
+                    Meta.setDisplayName(ChatColor.STRIKETHROUGH + "Buy A " + material.name());
+                    Lore.add( ChatColor.BOLD + "" + ChatColor.GRAY +
+                            "Not Enough Money To Buy");
+                }
+            }
+
+            Lore.add(ChatColor.WHITE + "Cost: " +ChatColor.GOLD + quantity*Price + "$");
+
+            Meta.setLore(Lore);
+            Block.setItemMeta(Meta);
+
+            itemList[9+(i*2)] = Block.clone();
+        }
+
+        int numOfItem = 0;
+        ItemStack[] playerInventory = player.getInventory().getContents();
+        for (ItemStack item: playerInventory){
+            if (item != null) {
+                if (item.getType().equals(material)) {
+                    numOfItem += item.getAmount();
+                }
             }
         }
-        return ReturnList.toArray(new ItemStack[0]);
-    }
-    public static ItemStack[] GetItemBuyList(ItemStack block, int[] quantity, int[] prices){
-        List<ItemStack> ReturnList = new ArrayList<>();
-        String blockName = block.getI18NDisplayName();
-        for (int i =0; i < prices.length; i++){
-            ItemStack x = block;
-            if(i <= quantity.length) {
-                ItemMeta Filler_Meta = block.getItemMeta();
-                if (quantity[i] != 1) {
-                    Filler_Meta.setDisplayName(ChatColor.GREEN + "Buy " + quantity[i] + " " + blockName +"s");
-                }
-                else {
-                    Filler_Meta.setDisplayName(ChatColor.GREEN + "Buy " + quantity[i] + " " + blockName);
-                }
 
-                ArrayList<String> Filler_lore = new ArrayList<>();
-                Filler_lore.add(ChatColor.WHITE + "Cost: " +ChatColor.GOLD + prices[i] + "$");
-                Filler_Meta.setLore(Filler_lore);
+        for (int i =0; i < quantities.length; i++){
+            int quantity = quantities[i];
+            ItemMeta Meta = Block.getItemMeta();
 
-                x.setItemMeta(Filler_Meta);
-                ReturnList.add(x.clone());
+            ArrayList<String> Lore = new ArrayList<>();
+
+            if(numOfItem >= quantity) {
+                if (quantity != 1) {
+                    Meta.setDisplayName(ChatColor.AQUA + "Sell " + quantity + " " + material.name() + "s");
+                } else {
+                    Meta.setDisplayName(ChatColor.AQUA + "Sell A " + material.name());
+                }
             }
-        }
-        return ReturnList.toArray(new ItemStack[0]);
-    }
-    public static ItemStack GetItemBuyList(ItemStack block, int price, String name){
-        String blockName = name;
-        ItemStack x = block;
-
-        ItemMeta Filler_Meta = block.getItemMeta();
-        Filler_Meta.setDisplayName(ChatColor.GREEN + "Buy A " + blockName);
-        ArrayList<String> Filler_lore = new ArrayList<>();
-        Filler_lore.add(ChatColor.WHITE + "Cost: " +ChatColor.GOLD + price + "$");
-        Filler_Meta.setLore(Filler_lore);
-
-        x.setItemMeta(Filler_Meta);
-
-        return x.clone();
-    }
-    public static ItemStack GetItemBuyList(ItemStack block, int price){
-        String blockName = block.getI18NDisplayName();
-        ItemStack x = block;
-
-        ItemMeta Filler_Meta = block.getItemMeta();
-        Filler_Meta.setDisplayName(ChatColor.GREEN + "Buy A " + blockName);
-        ArrayList<String> Filler_lore = new ArrayList<>();
-        Filler_lore.add(ChatColor.WHITE + "Cost: " +ChatColor.GOLD + price + "$");
-        Filler_Meta.setLore(Filler_lore);
-
-        x.setItemMeta(Filler_Meta);
-
-        return x.clone();
-    }
-
-    public static ItemStack[] GetItemSellList(ItemStack block, int[] quantity, int[] prices, String name){
-        List<ItemStack> ReturnList = new ArrayList<>();
-        String blockName = name;
-        for (int i =0; i < prices.length; i++){
-            ItemStack x = block;
-            if(i <= quantity.length) {
-                ItemMeta Filler_Meta = block.getItemMeta();
-                if (quantity[i] != 1) {
-                    Filler_Meta.setDisplayName(ChatColor.RED + "Sell " + quantity[i] + " " + blockName +"s");
+            else {
+                if (quantity != 1) {
+                    Meta.setDisplayName(ChatColor.STRIKETHROUGH + "Sell " + quantity + " " + material.name() + "s" + ChatColor.STRIKETHROUGH  );
+                    Lore.add(ChatColor.BOLD + "" + ChatColor.GRAY +
+                            "Sufficient Quantity not in inventory");
+                } else {
+                    Meta.setDisplayName(ChatColor.STRIKETHROUGH + "Sell A " + material.name());
+                    Lore.add( ChatColor.BOLD + "" + ChatColor.GRAY +
+                            "Sufficient Quantity not in inventory");
                 }
-                else {
-                    Filler_Meta.setDisplayName(ChatColor.RED + "Sell A " + blockName);
-                }
-
-                ArrayList<String> Filler_lore = new ArrayList<>();
-                Filler_lore.add(ChatColor.WHITE + "For: " +ChatColor.GOLD + prices[i] + "$");
-                Filler_Meta.setLore(Filler_lore);
-
-                x.setItemMeta(Filler_Meta);
-                ReturnList.add(x.clone());
             }
+
+            Lore.add(ChatColor.WHITE + "Sell For: " +ChatColor.GOLD + quantity*Price + "$");
+
+            Meta.setLore(Lore);
+            Block.setItemMeta(Meta);
+
+            itemList[27+(i*2)] = Block.clone();
         }
-        return ReturnList.toArray(new ItemStack[0]);
+
+
+        Inventory gui = Bukkit.createInventory(player, 9*5, name);
+        gui.setContents(itemList);
+        player.openInventory(gui);
+
+
+
+
     }
-    public static ItemStack[] GetItemSellList(ItemStack block, int[] quantity, int[] prices){
-        List<ItemStack> ReturnList = new ArrayList<>();
-        String blockName = block.getI18NDisplayName();
-        for (int i =0; i < prices.length; i++){
-            ItemStack x = block;
-            if(i <= quantity.length) {
-                ItemMeta Filler_Meta = block.getItemMeta();
-                if (quantity[i] != 1) {
-                    Filler_Meta.setDisplayName(ChatColor.RED + "Sell " + quantity[i] + " " + blockName +"s");
-                }
-                else {
-                    Filler_Meta.setDisplayName(ChatColor.RED + "Sell A " + blockName);
-                }
-
-                ArrayList<String> Filler_lore = new ArrayList<>();
-                Filler_lore.add(ChatColor.WHITE + "For: " +ChatColor.GOLD + prices[i] + "$");
-                Filler_Meta.setLore(Filler_lore);
-
-                x.setItemMeta(Filler_Meta);
-                ReturnList.add(x.clone());
-            }
-        }
-        return ReturnList.toArray(new ItemStack[0]);
     }
-    public static ItemStack GetItemSellList(ItemStack block, int price, String name){
-        String blockName = name;
-        ItemStack x = block;
-
-        ItemMeta Filler_Meta = block.getItemMeta();
-        Filler_Meta.setDisplayName(ChatColor.RED + "Sell A " + blockName);
-        ArrayList<String> Filler_lore = new ArrayList<>();
-        Filler_lore.add(ChatColor.WHITE + "For: " +ChatColor.GOLD + price + "$");
-        Filler_Meta.setLore(Filler_lore);
-
-        x.setItemMeta(Filler_Meta);
-
-        return x.clone();
-    }
-    public static ItemStack GetItemSellList(ItemStack block, int price){
-        String blockName = block.getI18NDisplayName();
-        ItemStack x = block;
-
-        ItemMeta Filler_Meta = block.getItemMeta();
-        Filler_Meta.setDisplayName(ChatColor.RED + "Sell A " + blockName);
-        ArrayList<String> Filler_lore = new ArrayList<>();
-        Filler_lore.add(ChatColor.WHITE + "For: " +ChatColor.GOLD + price + "$");
-        Filler_Meta.setLore(Filler_lore);
-
-        x.setItemMeta(Filler_Meta);
-
-        return x.clone();
-    }
-
-
-
-}

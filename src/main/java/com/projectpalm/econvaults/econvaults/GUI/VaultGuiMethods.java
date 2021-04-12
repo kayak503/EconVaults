@@ -11,12 +11,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
 
 
 public class VaultGuiMethods { //
+   // Creates and sends a GUI of A players Vaults that are owned by them.
    public static void ShowVaults(Player player){
       VaultData[] playerVaults = Data.GetAllPlayerVaults(player);
       if (playerVaults == null){
@@ -39,15 +39,14 @@ public class VaultGuiMethods { //
       }
 
 
+
       ItemStack[] ItemStackVaultsArray = new ItemStack[ItemStackVaults.size()];
       ItemStackVaultsArray = (ItemStack[]) ItemStackVaults.toArray(ItemStackVaultsArray);
-      Inventory gui = Bukkit.createInventory(player, 27, ChatColor.BOLD + "Your Vaults");
-      gui.setContents(ItemStackVaultsArray);
-      player.openInventory(gui);
 
+      GuiMethods.GenerateInventory(ItemStackVaultsArray,ChatColor.BOLD + "Your Vaults",player,false);
 
    }
-   // Checks if player has a signed book in there right hand slot.. if they do uses books meta data to create vault
+   // adds a new vault for the player with the use of a book
    public static void AddNewVault(Player player){
       ItemStack book = player.getInventory().getItemInMainHand();
       if (book.getType().equals(Material.WRITTEN_BOOK)){
@@ -187,7 +186,7 @@ public class VaultGuiMethods { //
          newVault.GenUuid();
          newVault.SetContentsMap(Contents);
          Data.AddNewVault(newVault);
-
+         EconVaults.getInstance.tab.spawnTeller(newVault);
 
          if (Data.GetVaultByName(name,player) != null){
             player.sendMessage(ChatColor.GREEN + newVault.GetName() +" Was successfully created ");
@@ -198,6 +197,7 @@ public class VaultGuiMethods { //
 
       }
    }
+   // edits an existing vault for the player with the use of a book
    public static void EditVault(Player player){
       ItemStack book = player.getInventory().getItemInMainHand();
       if (book.getType().equals(Material.WRITTEN_BOOK)){
@@ -328,15 +328,12 @@ public class VaultGuiMethods { //
          Owners = new String[usernames.size()];
          Owners = (String[]) usernames.toArray(Owners);
 
-         if (Data.GetVaultByName(name,player) != null){
-            player.sendMessage(ChatColor.RED + "Name Error: You already have a vault called " + name + ". To see your full list of vaults do: /econvaults vaults ");
-            return;
-         }
          if (Contents.size() ==0){
             player.sendMessage(ChatColor.RED + "Contents Error: You have no contents for your vault");
             return;
          }
 
+         EconVaults.getInstance.tab.killTeller(MatchingVaults.GetUuid());
          MatchingVaults.SetName(name);
          MatchingVaults.SetVaultPosition(VaultPosition);
          MatchingVaults.SetTellerPosition(TellerPosition);
@@ -348,8 +345,10 @@ public class VaultGuiMethods { //
 
 
          if (Data.GetVaultByName(name,player) != null){
+            EconVaults.getInstance.tab.killTeller(MatchingVaults.GetUuid());
             player.sendMessage(ChatColor.GREEN + MatchingVaults.GetName() +" Was successfully Updated");
             player.getInventory().setItemInMainHand(null);
+            EconVaults.getInstance.tab.spawnTeller(MatchingVaults);
          }
          else {
             player.sendMessage(ChatColor.RED + " Vault Update failed, Something went wrong... :( ");
@@ -358,6 +357,7 @@ public class VaultGuiMethods { //
       }
    }
 
+   // gives the player a vaults data with the use of a written book
    public static void DisplayVaultProperties(Player player, VaultData vault){
       if (player.getInventory().getItemInMainHand().getType() != Material.AIR){
          player.sendMessage(ChatColor.YELLOW + "Your main Hand Must be free to use this Command");
@@ -387,6 +387,7 @@ public class VaultGuiMethods { //
       book.setItemMeta(im);
       player.getInventory().setItemInMainHand(book);
    }
+   // gives the player a vaults data with the use of a book and quill
    public static void EditVaultProperties(Player player, VaultData vault){
       if (player.getInventory().getItemInMainHand().getType() != Material.AIR){
          player.sendMessage(ChatColor.YELLOW + "Your main Hand Must be free to use this Command");

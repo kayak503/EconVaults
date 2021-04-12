@@ -1,6 +1,8 @@
 package com.projectpalm.econvaults.econvaults.Data;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 
 import java.util.Map;
 import java.util.UUID;
@@ -13,6 +15,7 @@ public class VaultData {
     private String[] Owners;
     private String Team;
     private UUID uuid;
+    private World World;
 
     public void SetName(String name){
         Name = name;
@@ -58,4 +61,18 @@ public class VaultData {
     public Map<Material,Integer> GetContentsMap(){
         return Contents;
     }
+
+
+
+    public int GetTellerX(){
+        return TellerPosition[0];
+    }
+    public int GetTellerY(){
+        return TellerPosition[1];
+    }
+    public int GetTellerZ(){
+        return TellerPosition[2];
+    }
+
+
 }

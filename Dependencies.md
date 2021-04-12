@@ -47,3 +47,12 @@ Gson is a Class to JSON converter. it makes saving and loading data simple by al
 > <https://github.com/deanveloper/SkullCreator>
 
 Skull Creator allows our plugin to use player heads and there textures hassle free. 
+
+## ProtocolLib
+> 4.5.0
+> 
+> [Dan Mulloy](https://github.com/dmulloy2)
+> 
+> https://github.com/dmulloy2/ProtocolLib/
+
+ProtocolLib Reduces reliance on NMS and will allow more fluid updates to future versions. 

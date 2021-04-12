@@ -52,4 +52,21 @@ Vaults contain a few optional settings. All settings show up under properties fo
 
 #### Viewing and editing your vaults 
 
- not yet complete 
+You can View your vaults with the command:
+
+> /econvaults Vaults
+
+This will open an interactive GUI, where each player head represents a vault. Hovering on a player head will present two options, left click will show the vaults properties in the form of a written book while right click will let the user change the properties by giving the user a book and quill with the existing data populated. To finalize updating a vault's settings, follow the same steps as Creating Your First Vault, supplementing the command with:  
+ 
+ > /econvaults Update 
+
+<img src="/Images/econYourVaults.PNG" >
+
+ #### Deleting A Vault
+
+To delete a vault do:
+
+ > /econvaults RemoveVault Vault_Name_Here 
+
+
+
